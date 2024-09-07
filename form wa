@@ -1,0 +1,94 @@
+            }
+        });
+
+        // Fungsi untuk menambah kolom produk
+        jQuery(document).on('click', '.add-product', function() {
+            var productCount = jQuery('.product-wrap').length;
+
+            if (productCount < 50) {
+                var newProductField = `
+                    <div class="product-wrap">
+                        <label class="item">
+                            <i class="icon ion-md-pricetag"></i>
+                            <input class="namaProduk wajib" type="text" placeholder="Nama Produk">
+                        </label>
+                        <button type="button" class="remove-product">Hapus Produk</button>
+                    </div>`;
+                jQuery(this).before(newProductField);
+            } else {
+                alert("Anda hanya bisa menambahkan hingga 50 produk.");
+            }
+        });
+
+        // Fungsi untuk menghapus kolom produk
+        jQuery(document).on('click', '.remove-product', function() {
+            jQuery(this).closest('.product-wrap').remove();
+        });
+
+        // Fungsi untuk mengirim data ke WhatsApp
+        jQuery(document).on('click','.formWA .submit', function(){
+            kirimWA(jQuery(this).parents('.poptamv').attr('id'));
+            return false;
+        });
+
+        function kirimWA(id) {
+            var validasi = true;
+
+            jQuery('#'+id+' .wajib').each(function() {
+                if (jQuery.trim(jQuery(this).val()) == '' || jQuery.trim(jQuery(this).val()) == 'default') {
+                    jQuery(this).addClass('focus');
+                }
+            });
+            jQuery('#'+id+' .wajib').each(function() {
+                if (jQuery.trim(jQuery(this).val()) == '') {
+                    validasi = false;
+                    jQuery(this).parents('label').find('.validasi').addClass('show');
+                    jQuery(this).focus();
+                    return false;
+                } else if (jQuery.trim(jQuery(this).val()) == 'default') {
+                    validasi = false;
+                    jQuery(this).parents('label').find('.validasi').addClass('show');
+                    return false;
+                }
+            });
+
+            if (validasi === true) {
+                var parameter = '';
+                var url_wa = 'https://web.whatsapp.com/send';
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                    url_wa = 'whatsapp://send';
+                }
+
+                var kode_area = 62;
+                var nomor_whatsapp_list = ['081228131136', '081234567890', '081298765432']; // Daftar nomor WhatsApp
+                var nomor_whatsapp = nomor_whatsapp_list[Math.floor(Math.random() * nomor_whatsapp_list.length)]; // Pilih nomor acak
+
+                var judul = jQuery('#'+id+' .title-content').text();
+                var namaProduk = jQuery.map(jQuery('#'+id+' .namaProduk'), function(el) { return jQuery(el).val(); }).join(', ');
+                var nama = jQuery('#'+id+' .nama').val();
+                var email = jQuery('#'+id+' .email').val();
+                var nohp = jQuery('#'+id+' .nohp').val();
+                var no_hpLain = jQuery('#'+id+' .no_hpLain').val();
+                var alamat = jQuery('#'+id+' .alamat').val();
+                var catatan = jQuery('#'+id+' .catatan').val();
+
+                if (nohp == 'Tidak') {
+                    nohp = no_hpLain;
+                }
+
+                parameter = '&text=' +
+                    '*'+judul+'*%0A' +
+                    '====================%0A' +
+                    '*Nama Produk:* ' + namaProduk + '%0A' +
+                    '*Nama:* ' + nama + '%0A' +
+                    '*E-mail:* ' + email + '%0A' +
+                    '*No. HP:* ' + nohp + '%0A' +
+                    '*Alamat:* ' + alamat + '%0A' +
+                    '*Catatan:* ' + catatan + '%0A';
+
+                window.open(url_wa + '?phone=' + kode_area + nomor_whatsapp + parameter, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>
